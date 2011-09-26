@@ -1,0 +1,118 @@
+body {
+    font-size: 13px;
+    font-family: "Microsoft Yahei", "微软雅黑", Tahoma, Arial, Helvetica, STHeiti, fantasy;
+}
+
+a {
+    color: #66c;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #66aaff;
+    text-decoration: underline;
+}
+
+form>div {
+    padding-left: 103px;
+    margin: 1em 0;
+}
+
+form>p>label {
+    display: inline-block;
+    padding-right: 15px;
+    text-align: right;
+    width: 88px;
+}
+
+form>p>span {
+    color: #ff6666;
+    font-size: 12px;
+    width: 88px;
+    padding-left: 10px;
+    *height: 27px;
+}
+
+input[type="text"], input[type="email"], input[type="password"] {
+    font-size: 16px;
+    width: 158px;
+    height: 27px;
+    padding: 1px 2px;
+    /*font-weight: bold;*/
+    color: #456;
+    *line-height: 25px;
+}
+
+input[type="password"] {
+    font-family: Arial, serif !important; /* for ff */
+}
+
+input[type="checkbox"] {
+    margin-right: 5px;
+    vertical-align: text-bottom;
+    *vertical-align: middle;
+}
+
+form.big>p>label {
+    font-size: 18px;
+    width: 88px;
+    *height: 27px;
+}
+
+form.large>p>label {
+    font-size: 18px;
+    width: 118px;
+    *height: 27px;
+}
+
+form.large>div {
+    padding-left: 133px;
+    margin-bottom: 1.2em;
+}
+
+button {
+    margin-right: 10px;
+}
+
+form.big button {
+    width: 80px;
+    height: 30px;
+    /*letter-spacing: 5px;*/
+    padding-left: 8px;
+    /**padding-left: 2px;*/
+    /**line-height: 26px;*/
+    /**vertical-align: middle;*/
+    /**overflow: hidden;*/
+}
+
+.error {
+    color: #ff6666;
+}
+
+.right-align {
+    text-align: right;
+    margin-right: 0;
+}
+
+header {
+    margin: 1em 0;
+}
+
+:focus {
+    outline: 0;
+}
+
+ /* for ie */
+button{
+    outline:none \9;
+}
+
+ /* for opera */
+@media all and (min-width: 0px) {
+    div>label {
+        vertical-align: text-bottom;
+    }
+}
+
+
+
