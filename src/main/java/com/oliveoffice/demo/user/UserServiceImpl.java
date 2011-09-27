@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -28,14 +27,14 @@ public class UserServiceImpl implements _Service<UserDTO> {
     private UserDAO userDAO;
 
     /**
-     * å°†{@code serviceName}å…¨éƒ¨è½¬ä¸ºå¤§å†™ï¼Œå¹¶ä¸”å°†çŸ­æ¨ªçº¿(-)è½¬ä¸ºä¸‹åˆ’çº¿(_)ï¼Œ
-     * ä»¥æ–¹ä¾¿è°ƒç”¨{@link com.oliveoffice.demo.user.UserServiceName#valueOf(String)}
-     * ä¾‹å¦‚ "check-username" -> "CHECK_USERNAME"
+     * ½«{@code serviceName}È«²¿×ªÎª´óĞ´£¬²¢ÇÒ½«¶ÌºáÏß(-)×ªÎªÏÂ»®Ïß(_)£¬
+     * ÒÔ·½±ãµ÷ÓÃ{@link com.oliveoffice.demo.user.UserServiceName#valueOf(String)}
+     * ÀıÈç "check-username" -> "CHECK_USERNAME"
      * </p>
-     * PS: ä½¿ç”¨çŸ­æ¨ªçº¿æ–¹ä¾¿åšSEO
+     * PS: Ê¹ÓÃ¶ÌºáÏß·½±ã×öSEO
      *
      * @param serviceName serviceName
-     * @return å¤§å†™åŠ ä¸‹åˆ’çº¿ç»„åˆçš„å­—ç¬¦ä¸²
+     * @return ´óĞ´¼ÓÏÂ»®Ïß×éºÏµÄ×Ö·û´®
      * @see com.oliveoffice.demo.user.UserServiceName
      */
     private String convertServiceName(String serviceName) {
@@ -92,7 +91,7 @@ public class UserServiceImpl implements _Service<UserDTO> {
 
     /**
      * Method login ...
-     * TODO: 3æ¬¡ç™»å½•å¤±è´¥åˆ™æ·»åŠ éªŒè¯ç æ ¡éªŒ
+     * TODO: 3´ÎµÇÂ¼Ê§°ÜÔòÌí¼ÓÑéÖ¤ÂëĞ£Ñé
      *
      * @param o of type UserDTO
      * @return {@link UserServiceResult} to decide the view
@@ -105,16 +104,16 @@ public class UserServiceImpl implements _Service<UserDTO> {
         final String username = o.getUsername();
         final String password = o.getPassword();
         /**
-         * å½“ç”¨æˆ·åä¸åˆæ³•æ—¶, æç¤ºUSERNAME_UNEXISTENT è€Œä¸æ˜¯ USERNAME_INVALID
-         * å› ä¸ºæ•°æ®åº“ä¸­è‚¯å®šä¸ä¼šå­˜åœ¨ä¸åˆæ³•çš„ç”¨æˆ·åï¼Œè¿™æ ·å¯ä»¥é¿å…å¯¹æ•°æ®åº“è¿›è¡Œæ— è°“çš„æŸ¥è¯¢,
-         * æ³¨: è¿™ç§æ ¡éªŒä¸€èˆ¬æ”¾åœ¨é¡µé¢ä¸Šç”¨jsæ‰§è¡Œ
-         * ä¸‹åŒ
+         * µ±ÓÃ»§Ãû²»ºÏ·¨Ê±, ÌáÊ¾USERNAME_UNEXISTENT ¶ø²»ÊÇ USERNAME_INVALID
+         * ÒòÎªÊı¾İ¿âÖĞ¿Ï¶¨²»»á´æÔÚ²»ºÏ·¨µÄÓÃ»§Ãû£¬ÕâÑù¿ÉÒÔ±ÜÃâ¶ÔÊı¾İ¿â½øĞĞÎŞÎ½µÄ²éÑ¯,
+         * ×¢: ÕâÖÖĞ£ÑéÒ»°ã·ÅÔÚÒ³ÃæÉÏÓÃjsÖ´ĞĞ
+         * ÏÂÍ¬
          */
         if (isInvalidUsername(username)) {
             o.addMessageKey(ServiceName, MessageKey.USERNAME_UNEXISTENT);
             return UserServiceResult.LOGIN.toString();
         }
-        // TODO: å®Œå–„ä¸šåŠ¡å¤„ç†è¿‡ç¨‹ï¼Œæé«˜æ€§èƒ½ï¼Œå¦‚å°½å¯èƒ½å‡å°‘æ•°æ®åº“æŸ¥è¯¢
+        // TODO: ÍêÉÆÒµÎñ´¦Àí¹ı³Ì£¬Ìá¸ßĞÔÄÜ£¬Èç¾¡¿ÉÄÜ¼õÉÙÊı¾İ¿â²éÑ¯
         User user = userDAO.getByUsername(username);
         if (user == null) {
             o.addMessageKey(ServiceName, MessageKey.USERNAME_UNEXISTENT);
@@ -152,7 +151,7 @@ public class UserServiceImpl implements _Service<UserDTO> {
     }
 
     /**
-     * åˆ›å»ºä¸€ä¸ªæ–°çš„ç”¨æˆ·, å¹¶æ¿€æ´»ç©ºé—´, è‡ªåŠ¨åˆ›å»ºé»˜è®¤æ—¥å¿—åˆ†ç±»
+     * ´´½¨Ò»¸öĞÂµÄÓÃ»§, ²¢¼¤»î¿Õ¼ä, ×Ô¶¯´´½¨Ä¬ÈÏÈÕÖ¾·ÖÀà
      *
      * @param o user
      * @return true if service succeed, otherwise false
@@ -162,7 +161,7 @@ public class UserServiceImpl implements _Service<UserDTO> {
             return UserServiceResult.REGISTER.toString();
         }
 
-        //æ£€éªŒå­—æ®µæ˜¯å¦åˆæ³• o.username o.newpass o.confoass o.nickname
+        //¼ìÑé×Ö¶ÎÊÇ·ñºÏ·¨ o.username o.newpass o.confoass o.nickname
         checkUsername(o);
         checkNewpass(o);
         checkConfpass(o);
@@ -176,7 +175,7 @@ public class UserServiceImpl implements _Service<UserDTO> {
         o.setRemoteIP(Context.getRequset().getRemoteAddr());
         Integer id = userDAO.save(o.toPojo());
         o.setId(id);
-        //æ³¨å†Œåè‡ªåŠ¨ç™»å½•,
+        //×¢²áºó×Ô¶¯µÇÂ¼,
         Context.getRequset().getSession().setAttribute(CONSTANT.SESSION_USERDTO, o.toSessionUserDTO());
         Context.setLoginCookies(o);
         return UserServiceResult.ROOT.toString();
@@ -235,7 +234,7 @@ public class UserServiceImpl implements _Service<UserDTO> {
     }
 
     /**
-     * ç”¨æˆ·åå¿…é¡»æ˜¯æœ‰æ•ˆçš„Emailåœ°å€
+     * ÓÃ»§Ãû±ØĞëÊÇÓĞĞ§µÄEmailµØÖ·
      *
      * @param username the name of User
      * @return True if username is illegal, otherwise false.
@@ -257,7 +256,7 @@ public class UserServiceImpl implements _Service<UserDTO> {
     }
 
     /**
-     * æ˜µç§°å¿…é¡»ä¸º4-20ä¸ªå­—èŠ‚(ä¸€ä¸ªæ±‰å­—å 2ä¸ªå­—èŠ‚)
+     * êÇ³Æ±ØĞëÎª4-20¸ö×Ö½Ú(Ò»¸öºº×ÖÕ¼2¸ö×Ö½Ú)
      *
      * @param nickname the nickname of User
      * @return True if nickname is illegal, otherwise false.
