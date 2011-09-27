@@ -10,10 +10,6 @@
         This Demo Show How To Integrate jQuery Struts2 MyBatis Guice Web Application.
     </description>
 
-    <listener>
-        <listener-class>com.oliveoffice.demo.listener.GlobalListener</listener-class>
-    </listener>
-
     <filter>
         <filter-name>guice</filter-name>
         <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
@@ -25,7 +21,11 @@
     </filter-mapping>
 
     <listener>
-        <listener-class>com.oliveoffice.demo.listener.HsqldbListener</listener-class>
+        <listener-class>HsqldbListener</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>GlobalListener</listener-class>
     </listener>
 </web-app>
 

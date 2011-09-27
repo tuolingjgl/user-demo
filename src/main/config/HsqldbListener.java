@@ -1,11 +1,9 @@
-package com.oliveoffice.demo.listener;
-
 /**
- * Class org.f0rb.demo.listener description goes here.
- *
- * @author Administrator
- * @version 1.0.0 11-7-14
- */
+* Class org.f0rb.demo.listener description goes here.
+*
+* @author Administrator
+* @version 1.0.0 11-7-14
+*/
 
 import org.hsqldb.Server;
 

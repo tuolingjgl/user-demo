@@ -1,5 +1,3 @@
-package com.oliveoffice.demo.listener;
-
 import com.google.inject.*;
 import com.google.inject.name.Names;
 import com.google.inject.servlet.GuiceServletContextListener;
