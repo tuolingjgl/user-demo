@@ -23,7 +23,6 @@ import java.util.Timer;
 public class GlobalListener extends GuiceServletContextListener {
     private static org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(GlobalListener.class);
 
-
     public Injector getInjector() {
         Struts2GuicePluginModule struts2GuicePluginModule = new Struts2GuicePluginModule();
         ServletModule servletModule = new ServletModule() {
@@ -47,7 +46,7 @@ public class GlobalListener extends GuiceServletContextListener {
             private Properties getConnection() {
                 final Properties myBatisProperties = new Properties();
                 myBatisProperties.setProperty("mybatis.environment.id", "user-demo");
-                myBatisProperties.setProperty("JDBC.schema", "user-demo");
+                myBatisProperties.setProperty("JDBC.schema", "demo");
                 myBatisProperties.setProperty("JDBC.username", "sa");
                 myBatisProperties.setProperty("JDBC.password", "");
                 myBatisProperties.setProperty("JDBC.autoCommit", "false");

@@ -16,7 +16,7 @@ import java.sql.Statement;
 /** 该类的职责是在WebApp启动时自动开启HSQL服务. 依然使用Server方式，不受AppServer的影响. */
 public class HsqldbListener implements ServletContextListener {
 
-    private static String ALIAS = "user-demo";
+    private static String ALIAS = "demo";
 
     /** Listener 初始化方法. */
     public void contextInitialized(ServletContextEvent sce) {
