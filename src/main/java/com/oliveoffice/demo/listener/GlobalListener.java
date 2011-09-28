@@ -1,3 +1,5 @@
+package com.oliveoffice.demo.listener;
+
 import com.google.inject.*;
 import com.google.inject.name.Names;
 import com.google.inject.servlet.GuiceServletContextListener;
@@ -22,46 +24,55 @@ import java.util.Timer;
 
 public class GlobalListener extends GuiceServletContextListener {
     private static org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(GlobalListener.class);
+    private static Injector injector = null;
+
+    public static Injector createInjector() {
+        if (injector == null) {
+            Struts2GuicePluginModule struts2GuicePluginModule = new Struts2GuicePluginModule();
+            ServletModule servletModule = new ServletModule() {
+                @Override
+                protected void configureServlets() {
+                    bind(StrutsPrepareAndExecuteFilter.class).in(Singleton.class);
+                    filter("/*").through(StrutsPrepareAndExecuteFilter.class);
+                }
+            };
+
+            MyBatisModule myBatisModule = new MyBatisModule() {
+                @Override
+                protected void initialize() {
+                    install(JdbcHelper.HSQLDB_Server);
+                    bindDataSourceProviderType(PooledDataSourceProvider.class);
+                    bindTransactionFactoryType(JdbcTransactionFactory.class);
+                    Names.bindProperties(binder(), getConnection());
+                    addMapperClass(UserDAO.class);
+                }
+
+                private Properties getConnection() {
+                    final Properties myBatisProperties = new Properties();
+                    myBatisProperties.setProperty("mybatis.environment.id", "user-demo");
+                    myBatisProperties.setProperty("JDBC.schema", "demo");
+                    myBatisProperties.setProperty("JDBC.username", "sa");
+                    myBatisProperties.setProperty("JDBC.password", "");
+                    myBatisProperties.setProperty("JDBC.autoCommit", "false");
+                    return myBatisProperties;
+                }
+            };
+
+            AbstractModule serviceModule = new AbstractModule() {
+                @Override
+                protected void configure() {
+                    bind(new TypeLiteral<_Service<UserDTO>>() {
+                    }).to(UserServiceImpl.class).in(Scopes.SINGLETON);
+                }
+            };
+            injector = Guice.createInjector(struts2GuicePluginModule,
+                    servletModule, myBatisModule, serviceModule);
+        }
+        return injector;
+    }
 
     public Injector getInjector() {
-        Struts2GuicePluginModule struts2GuicePluginModule = new Struts2GuicePluginModule();
-        ServletModule servletModule = new ServletModule() {
-            @Override
-            protected void configureServlets() {
-                bind(StrutsPrepareAndExecuteFilter.class).in(Singleton.class);
-                filter("/*").through(StrutsPrepareAndExecuteFilter.class);
-            }
-        };
-
-        MyBatisModule myBatisModule = new MyBatisModule() {
-            @Override
-            protected void initialize() {
-                install(JdbcHelper.HSQLDB_Server);
-                bindDataSourceProviderType(PooledDataSourceProvider.class);
-                bindTransactionFactoryType(JdbcTransactionFactory.class);
-                Names.bindProperties(binder(), getConnection());
-                addMapperClass(UserDAO.class);
-            }
-
-            private Properties getConnection() {
-                final Properties myBatisProperties = new Properties();
-                myBatisProperties.setProperty("mybatis.environment.id", "user-demo");
-                myBatisProperties.setProperty("JDBC.schema", "demo");
-                myBatisProperties.setProperty("JDBC.username", "sa");
-                myBatisProperties.setProperty("JDBC.password", "");
-                myBatisProperties.setProperty("JDBC.autoCommit", "false");
-                return myBatisProperties;
-            }
-        };
-
-        AbstractModule serviceModule = new AbstractModule() {
-            @Override
-            protected void configure() {
-                bind(new TypeLiteral<_Service<UserDTO>>() {}).to(UserServiceImpl.class).in(Scopes.SINGLETON);
-            }
-        };
-        return Guice.createInjector(struts2GuicePluginModule,
-                servletModule, myBatisModule, serviceModule);
+        return createInjector();
     }
 
     public void contextDestroyed(ServletContextEvent event) {
