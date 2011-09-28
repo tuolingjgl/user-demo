@@ -21,11 +21,11 @@
     </filter-mapping>
 
     <listener>
-        <listener-class>HsqldbListener</listener-class>
+        <listener-class>com.oliveoffice.demo.listener.HsqldbListener</listener-class>
     </listener>
 
     <listener>
-        <listener-class>GlobalListener</listener-class>
+        <listener-class>com.oliveoffice.demo.listener.GlobalListener</listener-class>
     </listener>
 </web-app>
 
