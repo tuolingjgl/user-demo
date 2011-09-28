@@ -4,6 +4,8 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionProxy;
 import com.opensymphony.xwork2.ActionProxyFactory;
 import com.opensymphony.xwork2.config.Configuration;
+import com.opensymphony.xwork2.config.ConfigurationManager;
+import com.opensymphony.xwork2.inject.Container;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.Dispatcher;
 import org.apache.struts2.dispatcher.mapper.ActionMapper;
@@ -28,9 +30,9 @@ public class Struts2TestCase {
     protected MockHttpServletResponse response;
     protected MockHttpSession session;
     protected MockPageContext pageContext;
-    protected com.opensymphony.xwork2.config.ConfigurationManager configurationManager;
-    protected com.opensymphony.xwork2.config.Configuration configuration;
-    protected com.opensymphony.xwork2.inject.Container container;
+    protected ConfigurationManager configurationManager;
+    protected Configuration configuration;
+    protected Container container;
     protected Map<String, String> dispatcherInitParams;
 
     /**
@@ -59,7 +61,6 @@ public class Struts2TestCase {
         ServletActionContext.setServletContext(servletContext);
         ServletActionContext.setRequest(request);
         ServletActionContext.setResponse(response);
-
         return proxy;
     }
 
