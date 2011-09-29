@@ -1,3 +1,5 @@
+<%@ page import="org.f0rb.demo._._DTO" %>
+<%@ page import="static org.f0rb.demo._._DTO.text" %>
 <%--@elvariable id="model" type="org.f0rb.demo.dto.UserDTO"--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page pageEncoding="UTF-8" %>
@@ -21,7 +23,7 @@
     </p>
 
     <p>
-        <label for="password-in">密码</label><input id="newpass-in" name="newpass" required type="password" placeholder="密码长度为6-25位"><span>${model.messages.newpass[0]}</span>
+        <label for="newpass-in"><%=text("user.password.label")%></label><input id="newpass-in" name="newpass" required type="password" placeholder="密码长度为6-25位"><span>${model.messages.newpass[0]}</span>
     </p>
 
     <p>
@@ -64,6 +66,8 @@ $(function() {
             $.get("check-" + fieldname, param, function(data) {
                 if (data.messages) {
                     elem.nextSibling.innerHTML = data.messages[fieldname];
+                } else {
+                    elem.nextSibling.innerHTML = ""
                 }
             })
         })
