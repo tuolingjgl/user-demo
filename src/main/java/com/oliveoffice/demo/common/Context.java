@@ -1,6 +1,6 @@
 package com.oliveoffice.demo.common;
 
-import com.oliveoffice.demo.user.UserDTO;
+import com.oliveoffice.demo.user.User;
 import org.apache.struts2.ServletActionContext;
 import org.f0rb.demo.utils.RequestUtils;
 
@@ -29,15 +29,15 @@ public class Context {
         return ServletActionContext.getRequest().getSession();
     }
 
-    public static void setLoginCookies(UserDTO o) {
+    public static void setLoginCookies(User o) {
         HttpServletRequest request = getRequset();
         HttpServletResponse response = getResponse();
         response.addCookie(RequestUtils.createCookie(request, CONSTANT.COOKIE_LASTLOGIN, o.getLatetime().toString(), -1));
         response.addCookie(RequestUtils.createCookie(request, CONSTANT.COOKIE_UUID, o.getUuid(),
-                Boolean.TRUE.equals(o.getAutologin()) ? CONSTANT.HOLDDAYS * 86400 : -1));
+                Boolean.TRUE.equals(o.getRememberMe()) ? CONSTANT.HOLDDAYS * 86400 : -1));
         try {
             response.addCookie(RequestUtils.createCookie(request, CONSTANT.COOKIE_NICKNAME, URLEncoder.encode(o.getNickname(), "utf-8"),
-                    Boolean.TRUE.equals(o.getAutologin()) ? CONSTANT.HOLDDAYS * 86400 : -1));
+                    Boolean.TRUE.equals(o.getRememberMe()) ? CONSTANT.HOLDDAYS * 86400 : -1));
         } catch (UnsupportedEncodingException e) { //nothing
         }
     }

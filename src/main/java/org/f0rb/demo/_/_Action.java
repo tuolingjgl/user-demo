@@ -9,7 +9,7 @@ import com.opensymphony.xwork2.ModelDriven;
  * Time: 15:02:05
  * To change this template use File | Settings | File Templates.
  */
-public abstract class _Action<T extends _DTO<?>> implements ModelDriven<T> {
+public abstract class _Action<T extends _Model> implements ModelDriven<T> {
     private T o;
     private _Service<T> service;
 

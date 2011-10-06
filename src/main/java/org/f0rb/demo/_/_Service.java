@@ -6,6 +6,6 @@ package org.f0rb.demo._;
  * @author Administrator
  * @version 1.0.0 11-7-14
  */
-public interface _Service<T extends _DTO<?>> {
+public interface _Service<T extends _Model> {
     String execute(T t);
 }

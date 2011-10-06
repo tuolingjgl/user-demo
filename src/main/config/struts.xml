@@ -23,5 +23,12 @@
         <interceptors>
             <interceptor name="json" class="org.apache.struts2.json.JSONInterceptor"/>
         </interceptors>
+
+        <global-results>
+            <result name="json" type="json">
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </global-results>
     </package>
 </struts>

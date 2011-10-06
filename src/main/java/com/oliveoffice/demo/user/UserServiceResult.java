@@ -16,8 +16,8 @@ public enum UserServiceResult {
 
     final private String name;
 
-    UserServiceResult(String s) {
-        name = s;
+    UserServiceResult(String name) {
+        this.name = name;
     }
 
     public String toString(){

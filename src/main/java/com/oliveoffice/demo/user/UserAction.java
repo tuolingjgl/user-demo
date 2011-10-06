@@ -1,10 +1,10 @@
 package com.oliveoffice.demo.user;
 
+import com.opensymphony.xwork2.ModelDriven;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Actions;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.f0rb.demo._._Action;
 import org.f0rb.demo._._Service;
 
 import javax.annotation.Resource;
@@ -31,18 +31,20 @@ import javax.inject.Inject;
 @Actions({
         @Action(value = "{method:.+}", params = {"serviceName", "{1}"})
 })
-public class UserAction extends _Action<UserDTO> {
-    public UserAction() {
-        super(new UserDTO());
-    }
-
-    /**
-     * 给Spring的注解注入提供一个接口
-     * @param service org.f0rb.demo.user.UserServiceImpl 的实例
-     */
+public class UserAction implements ModelDriven<User> {
     @Inject
     @Resource
-    public void setUserService(_Service<UserDTO> service){
-        setService(service);
+    private User user;
+    @Inject
+    @Resource
+    private _Service<User> userSerivice;
+
+    @Override
+    public User getModel() {
+        return user;
+    }
+
+    public String execute() {
+        return userSerivice.execute(user);
     }
 }

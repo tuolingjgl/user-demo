@@ -14,11 +14,11 @@ public enum UserServiceName {
     /**
      * 为ajax校验username字段提供的接口
      * <p/>
-     * 在{@code}{@link UserServiceImpl#execute(UserDTO)}
-     * 调用{@link UserServiceImpl#checkUsername(UserDTO)}
+     * 在{@code}{@link UserServiceImpl#execute(User)}
+     * 调用{@link UserServiceImpl#checkUsername(User)}
      *
-     * @see UserServiceImpl#execute(UserDTO)
-     * @see UserServiceImpl#checkUsername(UserDTO)
+     * @see UserServiceImpl#execute(User)
+     * @see UserServiceImpl#checkUsername(User)
      */
     CHECK_USERNAME,
     CHECK_NEWPASS,
@@ -26,7 +26,8 @@ public enum UserServiceName {
 
     // 管理员接口
     INDEX,  //查看全部用户
-    CREATE, //创建用户
-    VIEW, //查看指定用户
-    UNIMPLEMENTED;
+    INSERT, //创建用户
+    GET, //查看指定用户
+    UNIMPLEMENTED
+    ;
 }

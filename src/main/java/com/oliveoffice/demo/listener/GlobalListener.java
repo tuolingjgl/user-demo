@@ -5,9 +5,13 @@ import com.google.inject.name.Names;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 import com.google.inject.struts2.Struts2GuicePluginModule;
+import com.oliveoffice.demo.role.*;
+import com.oliveoffice.demo.user.User;
 import com.oliveoffice.demo.user.UserDAO;
-import com.oliveoffice.demo.user.UserDTO;
 import com.oliveoffice.demo.user.UserServiceImpl;
+import com.oliveoffice.demo.userrole.UserRole;
+import com.oliveoffice.demo.userrole.UserRoleDAO;
+import com.oliveoffice.demo.userrole.UserRoleServiceImpl;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter;
 import org.f0rb.demo._._Service;
@@ -16,6 +20,7 @@ import org.mybatis.guice.datasource.builtin.PooledDataSourceProvider;
 import org.mybatis.guice.datasource.helper.JdbcHelper;
 
 import javax.servlet.ServletContextEvent;
+import java.io.IOException;
 import java.lang.ref.PhantomReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -37,7 +42,7 @@ public class GlobalListener extends GuiceServletContextListener {
                 }
             };
 
-            MyBatisModule myBatisModule = new MyBatisModule() {
+            Module myBatisModule = new MyBatisModule() {
                 @Override
                 protected void initialize() {
                     install(JdbcHelper.HSQLDB_Server);
@@ -45,24 +50,32 @@ public class GlobalListener extends GuiceServletContextListener {
                     bindTransactionFactoryType(JdbcTransactionFactory.class);
                     Names.bindProperties(binder(), getConnection());
                     addMapperClass(UserDAO.class);
+                    addMapperClass(RoleDAO.class);
+                    addMapperClass(UserRoleDAO.class);
                 }
 
                 private Properties getConnection() {
                     final Properties myBatisProperties = new Properties();
-                    myBatisProperties.setProperty("mybatis.environment.id", "user-demo");
-                    myBatisProperties.setProperty("JDBC.schema", "demo");
-                    myBatisProperties.setProperty("JDBC.username", "sa");
-                    myBatisProperties.setProperty("JDBC.password", "");
-                    myBatisProperties.setProperty("JDBC.autoCommit", "false");
+                    try {
+                        myBatisProperties.load(getClass().getResourceAsStream("/MyBatis.properties"));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        myBatisProperties.setProperty("mybatis.environment.id", "user-demo");
+                        myBatisProperties.setProperty("JDBC.schema", "demo");
+                        myBatisProperties.setProperty("JDBC.username", "sa");
+                        myBatisProperties.setProperty("JDBC.password", "");
+                        myBatisProperties.setProperty("JDBC.autoCommit", "false");
+                    }
                     return myBatisProperties;
                 }
             };
 
-            AbstractModule serviceModule = new AbstractModule() {
+            Module serviceModule = new Module() {
                 @Override
-                protected void configure() {
-                    bind(new TypeLiteral<_Service<UserDTO>>() {
-                    }).to(UserServiceImpl.class).in(Scopes.SINGLETON);
+                public void configure(Binder binder) {
+                    binder.bind(new TypeLiteral<_Service<User>>() {}).to(UserServiceImpl.class).in(Scopes.SINGLETON);
+                    binder.bind(new TypeLiteral<_Service<Role>>() {}).to(RoleServiceImpl.class).in(Scopes.SINGLETON);
+                    binder.bind(new TypeLiteral<_Service<UserRole>>() {}).to(UserRoleServiceImpl.class).in(Scopes.SINGLETON);
                 }
             };
             injector = Guice.createInjector(struts2GuicePluginModule,

@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  * @author f0rb
  * @version 1.0.0 2010-1-27
  */
-public class UserServiceImpl implements _Service<UserDTO> {
+public class UserServiceImpl implements _Service<User> {
     private final static Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Inject
@@ -41,11 +41,17 @@ public class UserServiceImpl implements _Service<UserDTO> {
         return serviceName.toUpperCase().replaceAll("-", "_");
     }
 
-    public String execute(UserDTO o) {
+    /**
+     * 验证权限 需要当前调用的业务, 如"user#index", 然后从session中取出当前用户, 取出当前角色,
+     * 再获取该角色所拥有的权限, 如果有该业务的调用权限则继续.
+     * @param o
+     * @return
+     */
+    public String execute(User o) {
         return execute(o.getServiceName(), o);
     }
 
-    public String execute(final String serviceName, UserDTO o) {
+    public String execute(final String serviceName, User o) {
         LOGGER.info("execute service [" + serviceName + "] start;");
         String service = convertServiceName(serviceName);
         String serviceResult;
@@ -59,8 +65,8 @@ public class UserServiceImpl implements _Service<UserDTO> {
             case LOGIN:
                 serviceResult = login(o);
                 break;
-            case CREATE:
-                serviceResult = create(o);
+            case INSERT:
+                serviceResult = insert(o);
                 break;
             case REGISTER:
                 serviceResult = register(o);
@@ -93,10 +99,10 @@ public class UserServiceImpl implements _Service<UserDTO> {
      * Method login ...
      * TODO: 3次登录失败则添加验证码校验
      *
-     * @param o of type UserDTO
+     * @param o of type User
      * @return {@link UserServiceResult} to decide the view
      */
-    public String login(UserDTO o) {
+    public String login(User o) {
         final String ServiceName = "login";
         if ("GET".equalsIgnoreCase(Context.getRequset().getMethod())) {
             return UserServiceResult.LOGIN.toString();
@@ -126,23 +132,22 @@ public class UserServiceImpl implements _Service<UserDTO> {
         user.setLast_ip(Context.getRequset().getRemoteAddr());
         user.setOnline(user.getOnline() + 1);
         user.setLatetime(new Timestamp(System.currentTimeMillis()));
-        o.fillByPojo(user);
         userDAO.login(user);
-        Context.getRequset().getSession().setAttribute(CONSTANT.SESSION_USERDTO, o.toSessionUserDTO());
-        Context.setLoginCookies(o);
+        Context.getRequset().getSession().setAttribute(CONSTANT.SESSION_USERDTO, user.toSessionUser());
+        Context.setLoginCookies(user);
         return UserServiceResult.ROOT.toString();
     }
 
     /**
      * Method logout ...
      *
-     * @param o of type UserDTO
+     * @param o of type User
      * @return true if service succeed, otherwise false
      */
-    public String logout(UserDTO o) {
-        UserDTO sessionUserDTO = (UserDTO) Context.getSession().getAttribute(CONSTANT.SESSION_USERDTO);
-        if (sessionUserDTO != null) {
-            final int id = sessionUserDTO.getId();
+    public String logout(User o) {
+        User sessionUser = (User) Context.getSession().getAttribute(CONSTANT.SESSION_USERDTO);
+        if (sessionUser != null) {
+            final int id = sessionUser.getId();
             userDAO.logout(id);
             Context.getSession().removeAttribute(CONSTANT.SESSION_USERDTO);
             Context.clearLoginCookies();
@@ -156,7 +161,7 @@ public class UserServiceImpl implements _Service<UserDTO> {
      * @param o user
      * @return true if service succeed, otherwise false
      */
-    public String register(UserDTO o) {
+    public String register(User o) {
         if ("GET".equalsIgnoreCase(Context.getRequset().getMethod())) {
             return UserServiceResult.REGISTER.toString();
         }
@@ -172,11 +177,11 @@ public class UserServiceImpl implements _Service<UserDTO> {
             return UserServiceResult.REGISTER.toString();
         }
 
-        o.setRemoteIP(Context.getRequset().getRemoteAddr());
-        Integer id = userDAO.save(o.toPojo());
+        o.setLast_ip(Context.getRequset().getRemoteAddr());
+        Integer id = userDAO.save(o.toModel());
         o.setId(id);
         //注册后自动登录,
-        Context.getRequset().getSession().setAttribute(CONSTANT.SESSION_USERDTO, o.toSessionUserDTO());
+        Context.getRequset().getSession().setAttribute(CONSTANT.SESSION_USERDTO, o.toSessionUser());
         Context.setLoginCookies(o);
         return UserServiceResult.ROOT.toString();
     }
@@ -187,9 +192,9 @@ public class UserServiceImpl implements _Service<UserDTO> {
      * @param o
      * @return "json"
      */
-    public String checkUsername(final UserDTO o) {
+    public String checkUsername(final User o) {
         final String username = o.getUsername();
-        final String FIELD = UserDTO.FIELD_USERNAME;
+        final String FIELD = User.USERNAME;
         if (isInvalidUsername(username)) {
             o.addMessageKey(FIELD, MessageKey.USERNAME_INVALID);
         } else if (hasUsername(username)) {
@@ -198,25 +203,25 @@ public class UserServiceImpl implements _Service<UserDTO> {
         return UserServiceResult.JSON.toString();
     }
 
-    public String checkNewpass(final UserDTO o) {
+    public String checkNewpass(final User o) {
         if (isInvalidPassword(o.getNewpass())) {
-            o.addMessageKey(UserDTO.FIELD_NEWPASS, MessageKey.NEWPASS_INVALID);
+            o.addMessageKey(User.FIELD_NEWPASS, MessageKey.NEWPASS_INVALID);
         }
         return UserServiceResult.JSON.toString();
     }
 
-    public String checkConfpass(UserDTO o) {
+    public String checkConfpass(User o) {
         final String newpass = o.getNewpass();
         final String confpass = o.getConfpass();
         if (confpass == null || !confpass.equals(newpass)) {
-            o.addMessageKey(UserDTO.FIELD_CONFPASS, MessageKey.CONFPASS_MISMATCH);
+            o.addMessageKey(User.FIELD_CONFPASS, MessageKey.CONFPASS_MISMATCH);
         }
         return UserServiceResult.JSON.toString();
     }
 
-    public String checkNickname(final UserDTO o) {
+    public String checkNickname(final User o) {
         final String nickname = o.getNickname();
-        final String FIELD = UserDTO.FIELD_NICKNAME;
+        final String FIELD = User.NICKNAME;
         if (isInvalidNickname(nickname)) {
             o.addMessageKey(FIELD, MessageKey.NICKNAME_INVALID);
         } else if (hasNickname(nickname)) {
@@ -225,11 +230,11 @@ public class UserServiceImpl implements _Service<UserDTO> {
         return UserServiceResult.JSON.toString();
     }
 
-    public String create(UserDTO o) {
+    public String insert(User o) {
         return UserServiceResult.CODE_404.toString();
     }
 
-    public String index(UserDTO o) {
+    public String index(User o) {
         return UserServiceResult.CODE_404.toString();
     }
 
